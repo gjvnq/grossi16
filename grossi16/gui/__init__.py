@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
+__author__ = "Gabriel Queiroz"
+__credits__ = ["Gabriel Queiroz", "Estevão Lobo", "Pedro Ilído"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "Gabriel Queiroz"
+__email__ = "gabrieljvnq@gmail.com"
+__status__ = "Pre-alpha"
+
 import tkinter as tk
 import pygubu
-
+import pkg_resources
 
 class Application(pygubu.TkApplication):
     def _create_ui(self):
@@ -10,7 +18,7 @@ class Application(pygubu.TkApplication):
         self.builder = builder = pygubu.Builder()
 
         #2: Load an ui file
-        builder.add_from_file('base.ui')
+        builder.add_from_string(pkg_resources.resource_string("grossi16.gui", "base.ui"))
 
         #3: Create the widget using a master as parent
         self.mainwindow = builder.get_object('MainFrame', self.master)
@@ -38,9 +46,12 @@ class Application(pygubu.TkApplication):
             self._last_port = self._port_box.get()
             print("Changed port to ", self._last_port)
 
-        root.after(50, self._has_port_been_updated)
+        self.master.after(50, self._has_port_been_updated)
 
-if __name__ == '__main__':
+def main():
     root = tk.Tk()
     app = Application(root)
     root.mainloop()
+
+if __name__ == '__main__':
+    main()

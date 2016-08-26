@@ -7,15 +7,17 @@ setup(name='grossi16',
       author_email='gabrieljvnq@gmail.com',
       license='MIT',
       package_dir={'gorssi16': 'grossi16'},
-#      package_data={'grossi16': ['tex_packages/*.sty', 'tex_packages/emoji/pdf/*.pdf', 'web_files/*.css', 'web_files/*.html', 'web_files/*.css', 'web_files/*.js']},
-      packages=['grossi16'],
+      package_data={'grossi16.gui': ['*.ui']},
+      packages=['grossi16.gui', 'grossi16.web'],
+      zip_safe=True,
       include_package_data=True,
-      install_requires=['flask'],
+      install_requires=['flask', 'click'],
       entry_points={
           'console_scripts': [
-              'grossi16=grossi16:main'
+              'grossi16=grossi16.gui:main',
+              'grossi16-cli=grossi16.web:main'
           ],
           'setuptools.installation': [
-              'eggsecutable=grossi16:main'
+              'eggsecutable=grossi16.gui:main'
           ],
       })
