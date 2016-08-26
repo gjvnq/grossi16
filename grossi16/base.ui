@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="tk.Toplevel" name="mainwindow" id="mainwindow">
+    <property name="borderwidth">5</property>
+    <property name="height">200</property>
+    <property name="resizable">none</property>
+    <property name="title" translatable="yes">Grossi16</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Frame" name="MainFrame" id="MainFrame">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="Label_2">
+            <property name="text" translatable="yes">Endereço:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">e</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_3">
+            <property name="text" translatable="yes">Porta:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">e</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_4">
+            <property name="text" translatable="yes">Status:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">ne</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Spinbox" name="PortBox" id="PortBox">
+            <property name="from_">0</property>
+            <property name="increment">1</property>
+            <property name="text" translatable="yes">8080</property>
+            <property name="textvariable">int:port</property>
+            <property name="to">65000</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="LblStatus">
+            <property name="text" translatable="yes">Loading...
+</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">nw</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="LblURL">
+            <property name="text" translatable="yes">Loading...</property>
+            <bind add="" handler="_on_url_click" sequence="&lt;Button-1&gt;" />
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
