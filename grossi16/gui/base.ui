@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <interface>
-  <object class="tk.Toplevel" name="mainwindow" id="mainwindow">
-    <property name="borderwidth">5</property>
+  <object class="tk.Toplevel" id="mainwindow">
+    <property name="borderwidth">15</property>
     <property name="height">200</property>
     <property name="resizable">none</property>
     <property name="title" translatable="yes">Grossi16</property>
     <property name="width">200</property>
     <child>
-      <object class="ttk.Frame" name="MainFrame" id="MainFrame">
+      <object class="ttk.Frame" id="MainFrame">
         <property name="height">200</property>
         <property name="width">200</property>
         <layout>
@@ -43,13 +43,13 @@
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>
-              <property name="row">2</property>
+              <property name="row">3</property>
               <property name="sticky">ne</property>
             </layout>
           </object>
         </child>
         <child>
-          <object class="ttk.Spinbox" name="PortBox" id="PortBox">
+          <object class="ttk.Spinbox" id="PortBox">
             <property name="from_">0</property>
             <property name="increment">1</property>
             <property name="text" translatable="yes">8080</property>
@@ -70,7 +70,7 @@
             <layout>
               <property name="column">1</property>
               <property name="propagate">True</property>
-              <property name="row">2</property>
+              <property name="row">3</property>
               <property name="sticky">nw</property>
             </layout>
           </object>
@@ -83,6 +83,30 @@
               <property name="column">1</property>
               <property name="propagate">True</property>
               <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_1">
+            <property name="justify">left</property>
+            <property name="text" translatable="yes">Senha do
+Professor:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">e</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="LblPasswd">
+            <property name="text" translatable="yes">0000</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
               <property name="sticky">w</property>
             </layout>
           </object>
