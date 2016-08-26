@@ -1,0 +1,24 @@
+.main-btns .button {
+    text-align: center;
+    width: 20em;
+}
+
+.first-container {
+    padding-top: 5em;
+}
+
+form > hr {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+form > div.row.radiobox {
+    display: table;
+    width: 100%;
+}
+
+form > div.row.radiobox > div {
+    height: 5rem;
+    display: table-cell;
+    vertical-align: middle;
+}

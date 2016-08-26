@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Grossi16</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="/static/normalize.css">
+  <link rel="stylesheet" href="/static/skeleton.css">
+  <link rel="stylesheet" href="/static/fonts.css">
+  <link rel="stylesheet" href="/static/custom.css">
+
+  <link rel="icon" type="image/png" href="static/favicon.png">
+</head>
+<body>
+  <div class="container first-container">
+    <div class="row">
+      <h3>{{ question }}</h3>
+      <br/>
+    </div>
+    <form action="/student/send">
+      {% for option in options %}
+      <div class="row radiobox">
+        <div>
+          <input type="radio" name="answer" value="{{ option.id }}"> {{ option.text }}
+        </div>
+      </div>
+      <hr/>
+      {% endfor %}
+      <div class="row">
+        <input class="button-primary" type="submit" value="Enviar resposta"/>
+      </div>
+    </form>
+  </div>
+
+  <script src="/static/zepto.min.js"></script>
+  <script type="text/javascript">
+  Zepto(function($){
+    $("div.row.radiobox").click(function() {
+      $($($(this).children("div")).children("input")).prop("checked", true);
+    });
+  });
+  </script>
+</body>
