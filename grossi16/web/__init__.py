@@ -21,8 +21,10 @@ FilesCache = {}
 webapp = flask.Flask("Grossi16")
 
 def templater(name, **kwargs):
-    tempfile_src = pkg_resources.resource_string("grossi16.web", "templates/"+name)
-    print(kwargs)
+    if NoCache == True:
+        tempfile_src = pkg_resources.resource_string("grossi16.web", "templates/"+name)
+    else:
+        tempfile_src = tempfile_src["templates/"+name]
     return flask.render_template_string(
         str(tempfile_src, encoding="utf-8"),
         **kwargs)
@@ -72,8 +74,8 @@ def static_handler(path):
         mime = get_mime_from_extension(path)
         return data, 200, {'Content-Type': mime+'; charset=utf-8'}
     elif NoCache == False and path in FilesCache:
-        data = FilesCache[path]
-        mime = get_mime_from_extension(path)
+        data = FilesCache["static/"+path]
+        mime = get_mime_from_extension("static/"+path)
         return data, 200, {'Content-Type': mime+'; charset=utf-8'}
     else:
         abort(404)
@@ -107,9 +109,10 @@ def main(addr, port, code):
     global FilesCache
     if NoCache == False:
         print("Loading files...")
-        for name in pkg_resources.resource_listdir("grossi16.web", "static"):
-            print("Loading "+name+"...")
-            FilesCache[name] = pkg_resources.resource_string("grossi16.web", "static/"+name)
+        for path in ["static/", "templates/"]:
+            for name in pkg_resources.resource_listdir("grossi16.web", path):
+                print("Loading "+path+name+"...")
+                FilesCache[path+name] = pkg_resources.resource_string("grossi16.web", path+name)
         print("Files loaded!")
 
     # Start webserver
