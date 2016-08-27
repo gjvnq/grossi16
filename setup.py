@@ -11,7 +11,7 @@ setup(name='grossi16',
       packages=['grossi16.gui', 'grossi16.web'],
       zip_safe=True,
       include_package_data=True,
-      install_requires=['flask', 'click'],
+      install_requires=['pygubu', 'flask', 'click'],
       entry_points={
           'console_scripts': [
               'grossi16=grossi16.gui:main',

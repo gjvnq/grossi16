@@ -8,7 +8,10 @@ __maintainer__ = "Gabriel Queiroz"
 __email__ = "gabrieljvnq@gmail.com"
 __status__ = "Pre-alpha"
 
-import tkinter as tk
+try:
+    import tkinter as tk
+except:
+    import Tkinter as tk
 import pygubu
 import pkg_resources
 
