@@ -19,6 +19,7 @@ import pkg_resources
 
 UseCache = True
 ServerStart = None
+TeacherPasswd = None
 
 # WEB PART
 FilesCache = {}
@@ -28,7 +29,6 @@ def templater(name, **kwargs):
     if UseCache == True and "templates/"+name in FilesCache:
         tempfile_src = FilesCache["templates/"+name]
     else:
-        print(name)
         tempfile_src = pkg_resources.resource_string("grossi16.web", "templates/"+name)
         if UseCache:
             FilesCache["templates/"+name] = tempfile_src
@@ -64,11 +64,60 @@ def student_page():
 
 @webapp.route("/teacher")
 def teacher_page():
-    return templater("teacher.html")
+    if is_teacher_logged_in():
+        return flask.redirect("/teacher/dashboard")
+    else:
+        return flask.redirect("/teacher/login")
 
-@webapp.route("/ajax/<command>")
-def ajax_cmd(command):
-    return command
+def is_teacher_logged_in():
+    return TeacherPasswd == flask.request.cookies.get('passwd')
+
+@webapp.route("/teacher/login", methods=["GET", "POST"])
+def teacher_login_page():
+    if is_teacher_logged_in():
+        return flask.redirect("/teacher/dashboard")
+
+    if flask.request.method == "POST":
+        # Store password in cookie
+        resp = flask.Response()
+        resp.set_cookie('passwd', flask.request.form["passwd"])
+
+        # Check if password is correct
+        if flask.request.form["passwd"] == TeacherPasswd:
+            #resp.set_data(flask.redirect("/teacher/dashboard"))
+            resp.headers['Location'] = "/teacher/dashboard"
+            resp.status_code = 302
+            resp.status = "Found"
+            return resp, 302
+
+        # Ask user to retry loging in
+        resp.set_data(templater("teacher_login.html", failed_once=True))
+        return resp
+
+    # Check if user has already tried to log in
+    if flask.request.cookies.get("passwd") != "":
+        return templater("teacher_login.html", failed_once=True)
+    else:
+        return templater("teacher_login.html")
+
+@webapp.route("/teacher/logout", methods=["GET", "POST"])
+def teacher_logout():
+    # Store password in cookie
+    resp = flask.Response()
+    resp.set_cookie("passwd", "")
+    resp.headers['Location'] = "/"
+    resp.status_code = 302
+    resp.status = "Found"
+    return resp, 302
+
+@webapp.route("/teacher/dashboard", methods=["GET", "POST"])
+def teacher_dashboard_page():
+    # Check if user has logged in
+    if not is_teacher_logged_in():
+        return flask.redirect("/teacher/login")
+
+    # Show dashboard
+    return templater("teacher_dashboard.html")
 
 @webapp.errorhandler(404)
 def err404(error):
@@ -90,7 +139,7 @@ def static_handler(path):
         except builtins.FileNotFoundError as e:
             flask.abort(404)
         
-    return flask.send_file(io.BytesIO(data), mimetype=mime, conditional=False)
+    return flask.send_file(io.BytesIO(data), mimetype=mime, conditional=False, add_etags=False)
 
 # CLI PART
 
@@ -132,8 +181,9 @@ def static_handler(path):
 )
 def main(addr, port, code, debug_mode, threads_flag):
     # Load files in memory
-    global FilesCache, ServerStart
+    global FilesCache, ServerStart, UseCache, TeacherPasswd
 
+    TeacherPasswd = str(code)
     ServerStart = datetime.datetime.now()
     UseCache = not debug_mode
 
@@ -152,7 +202,8 @@ def main(addr, port, code, debug_mode, threads_flag):
         "port": port,
         "threaded": threads_flag,
         "debug": debug_mode,
-        "UseCache": UseCache
+        "UseCache": UseCache,
+        "TeacherPasswd": TeacherPasswd
     }))
     webapp.run(host=addr, port=port, threaded=threads_flag, debug=debug_mode)
 

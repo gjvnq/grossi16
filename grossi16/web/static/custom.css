@@ -22,3 +22,7 @@ form > div.row.radiobox > div {
     display: table-cell;
     vertical-align: middle;
 }
+
+.error-msg {
+    color: #F44;
+}
