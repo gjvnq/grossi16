@@ -6,25 +6,32 @@ __license__ = "MIT"
 __version__ = "0.0.1"
 __maintainer__ = "Gabriel Queiroz"
 __email__ = "gabrieljvnq@gmail.com"
-__status__ = "Pre-alpha"
+__status__ = "pre-alpha"
 
+import io
 import click
-import logging
 import flask
+import logging
 import tempfile
+import builtins
+import datetime
 import pkg_resources
 
-NoCache = True
+UseCache = True
+ServerStart = None
 
 # WEB PART
 FilesCache = {}
 webapp = flask.Flask("Grossi16")
 
 def templater(name, **kwargs):
-    if NoCache == True:
-        tempfile_src = pkg_resources.resource_string("grossi16.web", "templates/"+name)
+    if UseCache == True and "templates/"+name in FilesCache:
+        tempfile_src = FilesCache["templates/"+name]
     else:
-        tempfile_src = tempfile_src["templates/"+name]
+        print(name)
+        tempfile_src = pkg_resources.resource_string("grossi16.web", "templates/"+name)
+        if UseCache:
+            FilesCache["templates/"+name] = tempfile_src
     return flask.render_template_string(
         str(tempfile_src, encoding="utf-8"),
         **kwargs)
@@ -64,21 +71,26 @@ def ajax_cmd(command):
     return command
 
 @webapp.errorhandler(404)
-def page_not_found(error):
+def err404(error):
     return templater("404.html"), 404
+
+@webapp.errorhandler(500)
+def err500(error):
+    return templater("500.html"), 500
 
 @webapp.route("/static/<path>")
 def static_handler(path):
-    if NoCache == True:
-        data = pkg_resources.resource_string("grossi16.web", "static/"+path)
-        mime = get_mime_from_extension(path)
-        return data, 200, {'Content-Type': mime+'; charset=utf-8'}
-    elif NoCache == False and path in FilesCache:
+    if UseCache == True and path in FilesCache:
         data = FilesCache["static/"+path]
         mime = get_mime_from_extension("static/"+path)
-        return data, 200, {'Content-Type': mime+'; charset=utf-8'}
     else:
-        abort(404)
+        try:
+            data = pkg_resources.resource_string("grossi16.web", "static/"+path)
+            mime = get_mime_from_extension(path)
+        except builtins.FileNotFoundError as e:
+            flask.abort(404)
+        
+    return flask.send_file(io.BytesIO(data), mimetype=mime, conditional=False)
 
 # CLI PART
 
@@ -104,10 +116,28 @@ def static_handler(path):
     type=click.IntRange(0, 65535),
     help="Teacher's console password"
 )
-def main(addr, port, code):
+@click.option(
+    '--debug',
+    '-d',
+    'debug_mode',
+    default=False,
+    is_flag=True,
+    help="If set to true, many optimization will be disabled in order to ease development. It will also automatically reload the code in event of any change. DO NOT USE IN PRODUCTION"
+)
+@click.option(
+    '--use-threads/--no-threads',
+    'threads_flag',
+    default=True,
+    help="Default value: True"
+)
+def main(addr, port, code, debug_mode, threads_flag):
     # Load files in memory
-    global FilesCache
-    if NoCache == False:
+    global FilesCache, ServerStart
+
+    ServerStart = datetime.datetime.now()
+    UseCache = not debug_mode
+
+    if UseCache == True:
         print("Loading files...")
         for path in ["static/", "templates/"]:
             for name in pkg_resources.resource_listdir("grossi16.web", path):
@@ -117,7 +147,14 @@ def main(addr, port, code):
 
     # Start webserver
     print("Starting webserver")
-    webapp.run(host=addr, port=port)
+    print("Options in use: "+str({
+        "host": addr,
+        "port": port,
+        "threaded": threads_flag,
+        "debug": debug_mode,
+        "UseCache": UseCache
+    }))
+    webapp.run(host=addr, port=port, threaded=threads_flag, debug=debug_mode)
 
 if __name__ == "__main__":
     main()
