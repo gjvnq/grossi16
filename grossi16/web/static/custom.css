@@ -26,3 +26,38 @@ form > div.row.radiobox > div {
 .error-msg {
     color: #F44;
 }
+
+/*div, p {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}*/
+
+textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+@media (min-width: 750px) {
+    .vcenter {
+        display: table;
+    }
+
+    .vcenter input, .vcenter p, .vcenter textarea {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .vcenter .columns {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .vcenter .columns,
+    .vcenter [class*="column"] + [class*="column"]:last-child {
+        float: none;
+    }
+}
