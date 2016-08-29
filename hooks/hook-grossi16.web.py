@@ -9,6 +9,6 @@ hiddenimports = [
 ]
 
 datas = [
-    ('../grossi16/web/static/*', 'grossi16/web/static'),
-    ('../grossi16/web/templates/*.html', 'grossi16/web/templates')
+    ('grossi16/web/static/*', 'grossi16/web/static'),
+    ('grossi16/web/templates/*.html', 'grossi16/web/templates')
 ]

@@ -9,7 +9,6 @@ __email__ = "gabrieljvnq@gmail.com"
 __status__ = "pre-alpha"
 
 import io
-import click
 import flask
 import logging
 import tempfile
@@ -30,8 +29,9 @@ def templater(name, **kwargs):
         tempfile_src = FilesCache["templates/"+name]
     else:
         tempfile_src = pkg_resources.resource_string("grossi16.web", "templates/"+name)
-        if UseCache:
+        if UseCache and "templates/"+name not in FilesCache:
             FilesCache["templates/"+name] = tempfile_src
+            print("Added to cache: "+"templates/"+name)
     return flask.render_template_string(
         str(tempfile_src, encoding="utf-8"),
         **kwargs)
@@ -138,47 +138,15 @@ def static_handler(path):
             mime = get_mime_from_extension(path)
         except builtins.FileNotFoundError as e:
             flask.abort(404)
+
+        if UseCache == True and "static/"+path not in FilesCache:
+            FilesCache["static/"+path] = data
+            print("Added to cache: "+"static/"+path)
         
     return flask.send_file(io.BytesIO(data), mimetype=mime, conditional=False, add_etags=False)
 
 # CLI PART
 
-@click.command()
-@click.option(
-    '--port',
-    '-p',
-    default=8080,
-    type=click.IntRange(0, 65535),
-    help='Port in which the web server will listen to'
-)
-@click.option(
-    '--bind-address',
-    'addr',
-    '-a',
-    default="0.0.0.0",
-    help='Address in which to bind the web server. Leave the default if you do not know what you are doing!'
-)
-@click.option(
-    '--code',
-    '-c',
-    default="1234",
-    type=click.IntRange(0, 65535),
-    help="Teacher's console password"
-)
-@click.option(
-    '--debug',
-    '-d',
-    'debug_mode',
-    default=False,
-    is_flag=True,
-    help="If set to true, many optimization will be disabled in order to ease development. It will also automatically reload the code in event of any change. DO NOT USE IN PRODUCTION"
-)
-@click.option(
-    '--use-threads/--no-threads',
-    'threads_flag',
-    default=True,
-    help="Default value: True"
-)
 def main(addr, port, code, debug_mode, threads_flag):
     # Load files in memory
     global FilesCache, ServerStart, UseCache, TeacherPasswd
@@ -189,12 +157,15 @@ def main(addr, port, code, debug_mode, threads_flag):
 
     if UseCache == True:
         print("Loading files...")
-        for path in ["static/", "templates/"]:
-            print(path)
-            for name in pkg_resources.resource_listdir("grossi16.web", path):
-                print("Loading "+path+name+"...")
-                FilesCache[path+name] = pkg_resources.resource_string("grossi16.web", path+name)
-        print("Files loaded!")
+        try:
+            for path in ["static/", "templates/"]:
+                print(path)
+                for name in pkg_resources.resource_listdir("grossi16.web", path):
+                    print("Loading "+path+name+"...")
+                    FilesCache[path+name] = pkg_resources.resource_string("grossi16.web", path+name)
+            print("Files loaded!")
+        except Exception as e:
+            print("Failed to pre load files: "+str(e))
 
     # Start webserver
     print("Starting webserver")
@@ -207,6 +178,3 @@ def main(addr, port, code, debug_mode, threads_flag):
         "TeacherPasswd": TeacherPasswd
     }))
     webapp.run(host=addr, port=port, threaded=threads_flag, debug=debug_mode)
-
-if __name__ == "__main__":
-    main()

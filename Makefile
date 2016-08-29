@@ -32,11 +32,11 @@ gui-one-dir: grossi16-gui.py
 	pyinstaller -y --distpath dist/onedir/ $(PYINSTALLER_OPTS) grossi16-gui.spec
 
 cli-one-file: grossi16/web
-	pyi-makespec --onefile $(MAKESPEC_OPTS) -n grossi16-cli grossi16/web/__init__.py
+	pyi-makespec --onefile $(MAKESPEC_OPTS) -n grossi16-cli grossi16/cli/cli.py
 	pyinstaller --distpath dist/onefile/ $(PYINSTALLER_OPTS) grossi16-cli.spec
 
 cli-one-dir: grossi16/web
-	pyi-makespec --onedir $(MAKESPEC_OPTS) -n grossi16-cli grossi16/web/__init__.py
+	pyi-makespec --onedir $(MAKESPEC_OPTS) -n grossi16-cli grossi16/cli/cli.py
 	pyinstaller -y --distpath dist/onedir/ $(PYINSTALLER_OPTS) grossi16-cli.spec
 
 clean:
