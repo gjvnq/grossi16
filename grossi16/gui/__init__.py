@@ -11,7 +11,15 @@ __status__ = "Pre-alpha"
 try:
     import tkinter as tk
 except:
-    import Tkinter as tk
+    try:
+        import Tkinter as tk
+    except:
+        import sys
+        print("FAILED TO LOAD GUI: TKINTER MODULE IS NOT AVAILABLE")
+        print("Please, install tkinter and reload this app or use the command line interface via grossi16-cli")
+        sys.exit(1)
+
+
 import pygubu
 import pkg_resources
 
