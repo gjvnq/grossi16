@@ -190,6 +190,7 @@ def main(addr, port, code, debug_mode, threads_flag):
     if UseCache == True:
         print("Loading files...")
         for path in ["static/", "templates/"]:
+            print(path)
             for name in pkg_resources.resource_listdir("grossi16.web", path):
                 print("Loading "+path+name+"...")
                 FilesCache[path+name] = pkg_resources.resource_string("grossi16.web", path+name)
