@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages
 setup(name='grossi16',
+      version='0.0.2',
       description='An open-source easy to use classroom clicker system',
       author='Gabriel Queiroz',
       author_email='gabrieljvnq@gmail.com',
