@@ -1,9 +1,11 @@
-PYINSTALLER_OPTS=--log-level=DEBUG --debug
+# PYINSTALLER_OPTS=--log-level=DEBUG --debug
 MAKESPEC_OPTS=--additional-hooks-dir=hooks
 PYINSTALLER=pyinstaller
 
-init:
-	pip install -r requirements.txt
+# init:
+# 	pip install -r requirements.txt
+
+all: egg gui-one-file cli-one-file
 
 install:
 	python3 setup.py install
@@ -23,19 +25,19 @@ fmt:
 test:
 	cd grossi16 && py.test-3
 
-gui-one-file: grossi16-gui.py
-	pyi-makespec --onefile $(MAKESPEC_OPTS) grossi16-gui.py
+gui-one-file: grossi16/gui/hack/gui-hack.py
+	pyi-makespec --onefile $(MAKESPEC_OPTS) -n grossi16-gui grossi16/gui/hack/gui-hack.py
 	pyinstaller --distpath dist/onefile/ $(PYINSTALLER_OPTS) grossi16-gui.spec
 
-gui-one-dir: grossi16-gui.py
-	pyi-makespec --onedir $(MAKESPEC_OPTS) grossi16-gui.py
+gui-one-dir: grossi16/gui/hack/gui-hack.py
+	pyi-makespec --onedir $(MAKESPEC_OPTS) -n grossi16-gui grossi16/gui/hack/gui-hack.py
 	pyinstaller -y --distpath dist/onedir/ $(PYINSTALLER_OPTS) grossi16-gui.spec
 
-cli-one-file: grossi16/web
+cli-one-file: grossi16/cli/cli.py
 	pyi-makespec --onefile $(MAKESPEC_OPTS) -n grossi16-cli grossi16/cli/cli.py
 	pyinstaller --distpath dist/onefile/ $(PYINSTALLER_OPTS) grossi16-cli.spec
 
-cli-one-dir: grossi16/web
+cli-one-dir: grossi16/cli/cli.py
 	pyi-makespec --onedir $(MAKESPEC_OPTS) -n grossi16-cli grossi16/cli/cli.py
 	pyinstaller -y --distpath dist/onedir/ $(PYINSTALLER_OPTS) grossi16-cli.spec
 

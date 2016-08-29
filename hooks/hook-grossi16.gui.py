@@ -9,8 +9,6 @@ hiddenimports = [
     "pygubu.builder.ttkstdwidgets"
 ]
 
-print("hi!")
-
 datas = [
-    ('../grossi16/gui/base.ui', 'grossi16/gui')
+    ('grossi16/gui/*.ui', 'grossi16/gui')
 ]
