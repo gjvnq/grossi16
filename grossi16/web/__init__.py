@@ -15,6 +15,7 @@ import tempfile
 import builtins
 import datetime
 import pkg_resources
+from random import randint
 from CommonMark import commonmark
 
 UseCache = True
@@ -31,6 +32,7 @@ QuestionTextRaw = "Enunciado da questão"
 QuestionAnswers = ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4", "...", "Resposta N"]
 QuestionAnswersRaw = ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4", "...", "Resposta N"]
 StudentsAnswers = {}
+StudentsKeys = {}
 
 def templater(name, **kwargs):
     if UseCache == True and "templates/"+name in FilesCache:
@@ -69,11 +71,55 @@ def who_are_you():
 
 @webapp.route("/student")
 def student_page():
+    # Generate answers list
     o = []
     for k, answer in enumerate(QuestionAnswers):
         o.append({"id": k, "text": answer})
 
-    return templater("student.html", options=o, question=QuestionText)
+    # Generate "key" to prevent accidental double voting
+    global StudentsKeys
+    while True:
+        key = randint(0, 18446744073709551615)
+        if key not in StudentsKeys:
+            StudentsKeys[key] = False
+            break
+
+    return templater("student.html", options=o, question=QuestionText, key=key)
+
+@webapp.route("/student/send", methods=["POST"])
+def student_send_page():
+    global StudentsAnswers, StudentsKeys
+    try:
+        key = int(flask.request.form.get("key"))
+        ans = int(flask.request.form.get("answer"))
+    except:
+        return flask.redirect("/student?ans_not_int=1")
+
+    # Check if key was set
+    if key not in StudentsKeys:
+        return flask.redirect("/student?no_key=1")
+    if StudentsKeys[key] == True:
+        print(StudentsKeys, StudentsAnswers)
+        return templater(
+            "student_voted.html",
+            ok=False,
+            already_voted=True,
+            vote=QuestionAnswers[
+                StudentsAnswers[key]["answer"]
+            ])
+
+    # Check if key was already use
+    new_vote = QuestionAnswers[ans]
+
+    # Register vote
+    StudentsAnswers[key] = {
+        "answer": ans,
+        "time": datetime.datetime.now()
+    }
+    StudentsKeys[key] = True
+
+    # Tell user what happened
+    return templater("student_voted.html", ok=True, vote=new_vote)
 
 @webapp.route("/teacher/update_questions", methods=["POST"])
 def teacher_update_questions():
@@ -86,7 +132,6 @@ def teacher_update_questions():
     answers = flask.request.form.get("answers")
 
     # Split answers up
-    print("A", bytes(answers, encoding="utf-8"))
     answers_raw = list(
         filter(
             lambda x: x != "",
@@ -111,8 +156,6 @@ def teacher_update_questions():
     QuestionAnswersRaw = answers_raw
     if delete == True:
         StudentsAnswers = {}
-
-    print(QuestionAnswersRaw)
 
     return flask.redirect("/teacher/dashboard")
 

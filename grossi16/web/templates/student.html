@@ -21,10 +21,10 @@
       {% endautoescape %}
       <br/>
     </div>
-    <form action="/student/send">
+    <form action="/student/send" method="POST">
       {% for option in options %}
       <div class="row radiobox">
-        <div>
+        <div class="button" style="text-align: left">
           {% autoescape false %}
           <input type="radio" name="answer" value="{{ option.id }}"> {{ option.text }}
           {% endautoescape %}
@@ -32,6 +32,7 @@
       </div>
       <hr/>
       {% endfor %}
+      <input type="hidden" name="key" value="{{ key }}"/>
       <div class="row">
         <input class="button-primary" type="submit" value="Enviar resposta"/>
       </div>
