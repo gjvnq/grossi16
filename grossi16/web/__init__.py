@@ -208,12 +208,29 @@ def teacher_logout():
 
 @webapp.route("/teacher/dashboard", methods=["GET", "POST"])
 def teacher_dashboard_page():
+    global StudentsAnswers
     # Check if user has logged in
     if not is_teacher_logged_in():
         return flask.redirect("/teacher/login")
 
+    # Calculate votes
+    votes = list(
+        map(
+            lambda x: [0, 0, x],
+            QuestionAnswers))
+    for i in range(len(QuestionAnswers)):
+        votes[i][0] = i
+
+    for key in StudentsAnswers:
+        reg = StudentsAnswers[key]
+        votes[reg["answer"]][1] += 1
+
     # Show dashboard
-    return templater("teacher_dashboard.html", question=QuestionTextRaw, answers="\n\n".join(QuestionAnswersRaw))
+    return templater(
+        "teacher_dashboard.html",
+        question=QuestionTextRaw,
+        votes=votes,
+        answers_text="\n\n".join(QuestionAnswersRaw))
 
 @webapp.errorhandler(404)
 def err404(error):

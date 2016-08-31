@@ -14,10 +14,10 @@
   <link rel="icon" type="image/png" href="static/favicon.png">
 </head>
 <body>
+  {% autoescape false %}
   <div class="container first-container">
     <div class="row">
       <div class="one-half column">
-        {% autoescape true %}
         {% if ok %}
           <h3>Voto registrado com êxito!</h3>
           <p>Você votou em: {{ vote }}</p>
@@ -28,11 +28,11 @@
           <h3 class="msg-error">Voto com problemas :(</h3>
           <p>Por favor, <a href="/student">tente novamente.</p>
         {% endif %}
-        {% endautoescape %}
         {% if ok or already_voted %}
           <a class="button" href="/student">Deixar o colega votar</a>
         {% endif %}
       </div>
     </div>
   </div>
+  {% endautoescape %}
 </body>

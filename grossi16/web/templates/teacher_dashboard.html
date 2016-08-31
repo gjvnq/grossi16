@@ -40,7 +40,7 @@
         </div>
         <div class="one columns vcenter"></div>
         <div class="four columns vcenter">
-          <textarea name="answers">{{ answers }}</textarea>
+          <textarea name="answers">{{ answers_text }}</textarea>
         </div>
       </div>
 
@@ -60,6 +60,23 @@
 
     <div class="row">
       <h4 class="section-heading">Resultados</h3>
+    </div>
+
+    {% autoescape false %}
+    {% for item in votes %}
+    <div class="row">
+      <div class="one column">
+        <code id="votes_op_{{ item[0] }}">{{ item[1] }}</code>
+      </div>
+      <div class="four columns">
+        {{ item[2] }}
+      </div>
+    </div>
+    {% endfor %}
+    {% endautoescape %}
+
+    <div class="row">
+      <hr/>
     </div>
 
     <div class="row">
