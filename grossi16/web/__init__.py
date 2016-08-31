@@ -3,7 +3,7 @@
 __author__ = "Gabriel Queiroz"
 __credits__ = ["Gabriel Queiroz", "Estevão Lobo", "Pedro Ilído"]
 __license__ = "MIT"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __maintainer__ = "Gabriel Queiroz"
 __email__ = "gabrieljvnq@gmail.com"
 __status__ = "alpha"
