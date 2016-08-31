@@ -126,7 +126,9 @@ def teacher_update_questions():
     if is_teacher_logged_in() != True:
         return flask.redirect("/teacher/login")
     # Check wether or not to keep students answers
-    delete = flask.request.form.get("submit_and_delete") != ""
+    delete = (
+        flask.request.form.get("submit_and_delete") != "" and
+        "submit_and_keep" not in flask.request.form)
     # Get other data
     question_text = flask.request.form.get("question_text")
     answers = flask.request.form.get("answers")
@@ -154,7 +156,9 @@ def teacher_update_questions():
     QuestionTextRaw = question_text_raw
     QuestionAnswers = answers
     QuestionAnswersRaw = answers_raw
+    print(delete)
     if delete == True:
+        print("Deleting answers...")
         StudentsAnswers = {}
 
     return flask.redirect("/teacher/dashboard")
