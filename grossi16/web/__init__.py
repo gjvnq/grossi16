@@ -15,6 +15,7 @@ import tempfile
 import builtins
 import datetime
 import pkg_resources
+from CommonMark import commonmark
 
 UseCache = True
 ServerStart = None
@@ -23,6 +24,13 @@ TeacherPasswd = None
 # WEB PART
 FilesCache = {}
 webapp = flask.Flask("Grossi16")
+
+
+QuestionText = "Enunciado da <em>questão</em>"
+QuestionTextRaw = "Enunciado da questão"
+QuestionAnswers = ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4", "...", "Resposta N"]
+QuestionAnswersRaw = ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4", "...", "Resposta N"]
+StudentsAnswers = {}
 
 def templater(name, **kwargs):
     if UseCache == True and "templates/"+name in FilesCache:
@@ -50,6 +58,11 @@ def get_mime_from_extension(file):
         return "image/png"
     return ""
 
+def remove_p_tags(text):
+    text = text.replace("<p>", "")
+    text = text.replace("</p>", "")
+    return text
+
 @webapp.route("/")
 def who_are_you():
     return templater("index.html")
@@ -57,10 +70,51 @@ def who_are_you():
 @webapp.route("/student")
 def student_page():
     o = []
-    o.append({"id": 1, "text": "hi"})
-    o.append({"id": 2, "text": "hi3"})
-    o.append({"id": 3, "text": "hi2"})
-    return templater("student.html", options=o, question="hi")
+    for k, answer in enumerate(QuestionAnswers):
+        o.append({"id": k, "text": answer})
+
+    return templater("student.html", options=o, question=QuestionText)
+
+@webapp.route("/teacher/update_questions", methods=["POST"])
+def teacher_update_questions():
+    if is_teacher_logged_in() != True:
+        return flask.redirect("/teacher/login")
+    # Check wether or not to keep students answers
+    delete = flask.request.form.get("submit_and_delete") != ""
+    # Get other data
+    question_text = flask.request.form.get("question_text")
+    answers = flask.request.form.get("answers")
+
+    # Split answers up
+    print("A", bytes(answers, encoding="utf-8"))
+    answers_raw = list(
+        filter(
+            lambda x: x != "",
+            map(
+                lambda x: x.strip(),
+                answers.split("\n\r"))))
+
+    # Parse markdown and remove <p>
+    question_text_raw = question_text
+    question_text = commonmark(question_text)
+    question_text = remove_p_tags(question_text)
+
+    answers = map(commonmark, answers_raw)
+    answers = map(remove_p_tags, answers)
+    answers = list(answers)
+
+    # Send to Global Variables
+    global QuestionText, QuestionTextRaw, QuestionAnswers, QuestionAnswersRaw, StudentsAnswers
+    QuestionText = question_text
+    QuestionTextRaw = question_text_raw
+    QuestionAnswers = answers
+    QuestionAnswersRaw = answers_raw
+    if delete == True:
+        StudentsAnswers = {}
+
+    print(QuestionAnswersRaw)
+
+    return flask.redirect("/teacher/dashboard")
 
 @webapp.route("/teacher")
 def teacher_page():
@@ -116,7 +170,7 @@ def teacher_dashboard_page():
         return flask.redirect("/teacher/login")
 
     # Show dashboard
-    return templater("teacher_dashboard.html")
+    return templater("teacher_dashboard.html", question=QuestionTextRaw, answers="\n\n".join(QuestionAnswersRaw))
 
 @webapp.errorhandler(404)
 def err404(error):

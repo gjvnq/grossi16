@@ -30,7 +30,7 @@
         </div>
         <div class="one columns vcenter"></div>
         <div class="four columns vcenter">
-          <input style="width:100%" type="text" id="question_text"/>
+          <input style="width:100%" type="text" name="question_text" value="{{ question }}"/>
         </div>
       </div>
       
@@ -40,15 +40,15 @@
         </div>
         <div class="one columns vcenter"></div>
         <div class="four columns vcenter">
-          <textarea id="answers"></textarea>
+          <textarea name="answers">{{ answers }}</textarea>
         </div>
       </div>
 
       <div class="row vcenter">
-        <input type="submit" value="Salvar e Apagar respostas dos alunos" class="button-primary"/>
+        <input type="submit" name="submit_and_delete" value="Salvar e Apagar respostas dos alunos" class="button-primary"/>
       </div>
       <div class="row vcenter">
-        <input type="submit" value="Salvar e Manter respostas dos alunos"/>
+        <input type="submit" name="submit_and_keep" value="Salvar e Manter respostas dos alunos"/>
       </div>
     </form>
 

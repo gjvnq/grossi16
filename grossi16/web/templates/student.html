@@ -16,14 +16,18 @@
 <body>
   <div class="container first-container">
     <div class="row">
+      {% autoescape false %}
       <h3>{{ question }}</h3>
+      {% endautoescape %}
       <br/>
     </div>
     <form action="/student/send">
       {% for option in options %}
       <div class="row radiobox">
         <div>
+          {% autoescape false %}
           <input type="radio" name="answer" value="{{ option.id }}"> {{ option.text }}
+          {% endautoescape %}
         </div>
       </div>
       <hr/>

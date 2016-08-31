@@ -15,7 +15,9 @@ setup(name='grossi16',
       install_requires=[
         'pygubu==0.9.7.7',
         'flask==0.11.1',
-        'click==6.6'
+        'click==6.6',
+        'CommonMark==0.7.2',
+        'FilterHTML==0.5.0'
       ],
       entry_points={
           'console_scripts': [
