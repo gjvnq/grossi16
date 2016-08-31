@@ -64,41 +64,40 @@ def student_page():
 
 @webapp.route("/teacher")
 def teacher_page():
-    if is_teacher_logged_in():
+    if is_teacher_logged_in() == True:
         return flask.redirect("/teacher/dashboard")
     else:
         return flask.redirect("/teacher/login")
 
 def is_teacher_logged_in():
-    return TeacherPasswd == flask.request.cookies.get('passwd')
+    if "passwd" in flask.request.cookies:
+        return TeacherPasswd == flask.request.cookies.get("passwd") and flask.request.cookies.get("passwd") != ""
+    return None
 
 @webapp.route("/teacher/login", methods=["GET", "POST"])
 def teacher_login_page():
-    if is_teacher_logged_in():
+    if is_teacher_logged_in() == True:
         return flask.redirect("/teacher/dashboard")
 
     if flask.request.method == "POST":
         # Store password in cookie
         resp = flask.Response()
-        resp.set_cookie('passwd', flask.request.form["passwd"])
+        resp.set_cookie("passwd", flask.request.form["passwd"])
 
         # Check if password is correct
         if flask.request.form["passwd"] == TeacherPasswd:
             #resp.set_data(flask.redirect("/teacher/dashboard"))
-            resp.headers['Location'] = "/teacher/dashboard"
+            resp.headers["Location"] = "/teacher/dashboard"
             resp.status_code = 302
             resp.status = "Found"
             return resp, 302
 
         # Ask user to retry loging in
-        resp.set_data(templater("teacher_login.html", failed_once=True))
+        resp.set_data(templater("teacher_login.html", failed_once=is_teacher_logged_in()!=None))
         return resp
 
     # Check if user has already tried to log in
-    if flask.request.cookies.get("passwd") != "":
-        return templater("teacher_login.html", failed_once=True)
-    else:
-        return templater("teacher_login.html")
+    return templater("teacher_login.html", failed_once=is_teacher_logged_in()!=None)
 
 @webapp.route("/teacher/logout", methods=["GET", "POST"])
 def teacher_logout():
