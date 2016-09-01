@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import click
+import webbrowser
 import grossi16.web as web
 
 @click.command(context_settings={"resilient_parsing": True})
@@ -40,7 +41,24 @@ import grossi16.web as web
     help="Default value: True"
 )
 def main(addr, port, code, debug_mode, threads_flag):
-    web.main(addr=addr, port=port, code=code, debug_mode=debug_mode, threads_flag=threads_flag)
+    q = Queue()
+    t_opener = Thread(target=web_opener, args=(q,))
+    t_server = Thread(target=web.main, kwargs={
+        "addr"=addr,
+        "port"=port,
+        "code"=code,
+        "debug_mode"=debug_mode,
+        "threads_flag"=threads_flag,
+        "com_channel"=q
+    })
+    t_server.start()
+    t_opener.start()
+
+def web_opener(q):
+    while True:
+        data = q.get()
+        print(data)
+        #webbrowser.open_new_tab(addr+':'+str(port))
 
 if __name__ == "__main__":
     main()

@@ -13,10 +13,10 @@ setup(name='grossi16',
       zip_safe=True,
       include_package_data=True,
       install_requires=[
-        'flask==0.11.1',
-        'click==6.6',
-        'CommonMark==0.7.2',
-        'FilterHTML==0.5.0'
+        'flask>=0.11.1',
+        'click>=6.6',
+        'CommonMark>=0.7.2',
+        'FilterHTML>=0.5.0'
       ],
       entry_points={
           'console_scripts': [

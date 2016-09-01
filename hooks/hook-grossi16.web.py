@@ -3,6 +3,7 @@
 hiddenimports = [
     "six",
     "packaging",
+    "webbrowser",
     "packaging.version",
     "packaging.specifiers",
     "packaging.requirements",
