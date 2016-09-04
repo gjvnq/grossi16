@@ -3,7 +3,7 @@
 __author__ = "Gabriel Queiroz"
 __credits__ = ["Gabriel Queiroz", "Estevão Lobo", "Pedro Ilído"]
 __license__ = "MIT"
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __maintainer__ = "Gabriel Queiroz"
 __email__ = "gabrieljvnq@gmail.com"
 __status__ = "alpha"
@@ -259,7 +259,7 @@ def static_handler(path):
         if UseCache == True and "static/"+path not in FilesCache:
             FilesCache["static/"+path] = data
             print("Added to cache: "+"static/"+path)
-        
+
     return flask.send_file(io.BytesIO(data), mimetype=mime, conditional=False, add_etags=False)
 
 # CLI PART
