@@ -44,12 +44,12 @@ def main(addr, port, code, debug_mode, threads_flag):
     q = Queue()
     t_opener = Thread(target=web_opener, args=(q,))
     t_server = Thread(target=web.main, kwargs={
-        "addr"=addr,
-        "port"=port,
-        "code"=code,
-        "debug_mode"=debug_mode,
-        "threads_flag"=threads_flag,
-        "com_channel"=q
+        "addr": addr,
+        "port": port,
+        "code": code,
+        "debug_mode": debug_mode,
+        "threads_flag": threads_flag,
+        "com_channel": q
     })
     t_server.start()
     t_opener.start()
