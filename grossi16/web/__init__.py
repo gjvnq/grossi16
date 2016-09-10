@@ -236,6 +236,28 @@ def teacher_dashboard_page():
         votes=votes,
         answers_text="\n\n".join(QuestionAnswersRaw))
 
+@webapp.route("/teacher/get_data", methods=["GET", "POST"])
+def teacher_get_data():
+    global StudentsAnswers
+    # Check if user has logged in
+    if not is_teacher_logged_in():
+        return flask.jsonify(error="Você precisa logar antes de ver as respostas"), 403
+
+    # Calculate votes
+    votes = list(
+        map(
+            lambda x: {"text": x, "votes": 0},
+            QuestionAnswers))
+    for i in range(len(QuestionAnswers)):
+        votes[i]["id"] = i
+
+    for key in StudentsAnswers:
+        reg = StudentsAnswers[key]
+        votes[reg["answer"]]["votes"] += 1
+
+    # Show dashboard
+    return flask.jsonify(votes=votes)
+
 @webapp.errorhandler(404)
 def err404(error):
     return templater("404.html"), 404

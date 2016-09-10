@@ -62,18 +62,9 @@
       <h4 class="section-heading">Resultados</h3>
     </div>
 
-    {% autoescape false %}
-    {% for item in votes %}
-    <div class="row">
-      <div class="one column">
-        <code id="votes_op_{{ item[0] }}">{{ item[1] }}</code>
-      </div>
-      <div class="four columns">
-        {{ item[2] }}
-      </div>
+    <div id="results">
+      <p>Carregando...</p>
     </div>
-    {% endfor %}
-    {% endautoescape %}
 
     <div class="row">
       <hr/>
@@ -85,4 +76,6 @@
       <a class="button" href="/teacher/logout">Sair</a>
     </div>
   </div>
+  <script type="text/javascript" href="/static/dimple.v2.2.0.min.js"></script>
+  <script type="text/javascript" href="/static/dashboard.js"></script>
 </body>
