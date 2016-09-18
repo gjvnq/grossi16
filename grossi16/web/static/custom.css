@@ -61,3 +61,15 @@ textarea {
         float: none;
     }
 }
+
+#results svg {
+    width:90vw;
+    height:180vw;
+}
+
+@media (min-width: 550px) {
+    #results svg {
+        width:30em;
+        height:30em;
+    }
+}

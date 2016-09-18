@@ -33,6 +33,7 @@ QuestionAnswers = ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4", "..."
 QuestionAnswersRaw = ["Resposta 1", "Resposta 2", "Resposta 3", "Resposta 4", "...", "Resposta N"]
 StudentsAnswers = {}
 StudentsKeys = {}
+LastVote = datetime.datetime.now()
 
 def templater(name, **kwargs):
     if UseCache == True and "templates/"+name in FilesCache:
@@ -88,7 +89,7 @@ def student_page():
 
 @webapp.route("/student/send", methods=["POST"])
 def student_send_page():
-    global StudentsAnswers, StudentsKeys
+    global StudentsAnswers, StudentsKeys, LastVote
     try:
         key = int(flask.request.form.get("key"))
         ans = int(flask.request.form.get("answer"))
@@ -117,6 +118,7 @@ def student_send_page():
         "time": datetime.datetime.now()
     }
     StudentsKeys[key] = True
+    LastVote = datetime.datetime.now()
 
     # Tell user what happened
     return templater("student_voted.html", ok=True, vote=new_vote)
@@ -256,7 +258,7 @@ def teacher_get_data():
         votes[reg["answer"]]["votes"] += 1
 
     # Show dashboard
-    return flask.jsonify(votes=votes)
+    return flask.jsonify(votes=votes, LastUpdate=LastVote.timestamp())
 
 @webapp.errorhandler(404)
 def err404(error):
