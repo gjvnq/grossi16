@@ -10,12 +10,12 @@ $( document ).ready(function() {
     }).showLabels(false);
     ResultsChart.noData("Nenhum voto por enquanto...");
     ResultsChart.labelType("percent").showLabels(true);
+    ResultsChart.labelsOutside(false);
     ResultsChart.tooltip.contentGenerator(function(key) {
-        resp = '<p> Enunciado: ' +  key.data.text + '</p>' + '<p> Votos: ' +  key.data.votes + '</p>'
-        console.log(resp);
+        resp = key.data.text + '<br/>' +  key.data.votes + ' voto(s)'
         return resp
        });
-    ResultsChart.tooltip.enabled(false);
+    ResultsChart.tooltip.enabled(true);
 
     d3.select("#results svg").datum({}).transition().duration(350)
     return ResultsChart;
