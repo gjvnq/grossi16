@@ -288,7 +288,7 @@ def static_handler(path):
 
 # CLI PART
 
-def main(addr, port, code, debug_mode, threads_flag):
+def main(addr, port, code, debug_mode, threads_flag, onStart):
     # Load files in memory
     global FilesCache, ServerStart, UseCache, TeacherPasswd
 
@@ -318,4 +318,5 @@ def main(addr, port, code, debug_mode, threads_flag):
         "UseCache": UseCache,
         "TeacherPasswd": TeacherPasswd
     }))
+    onStart()
     webapp.run(host=addr, port=port, threaded=threads_flag, debug=debug_mode)

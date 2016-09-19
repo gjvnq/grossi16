@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import click
+import webbrowser
 import grossi16.web as web
 
 @click.command(context_settings={"resilient_parsing": True})
@@ -34,18 +35,29 @@ import grossi16.web as web
     help="If set to true, many optimization will be disabled in order to ease development. It will also automatically reload the code in event of any change. DO NOT USE IN PRODUCTION"
 )
 @click.option(
+    '--open-browser/--no-open-browser',
+    'open_browser',
+    default=True,
+    help="By default, your webbrowser will be automatically oppend as soon as the server is ready"
+)
+@click.option(
     '--use-threads/--no-threads',
     'threads_flag',
     default=True,
     help="Default value: True"
 )
-def main(addr, port, code, debug_mode, threads_flag):
+def main(addr, port, code, debug_mode, threads_flag, open_browser):
+    onStart = lambda: None
+    if open_browser:
+        onStart = lambda: webbrowser.open("http://"+addr+":"+str(port)+"/welcome")
+
     web.main(
         addr=addr,
         port=port,
         code=code,
         debug_mode=debug_mode,
-        threads_flag=threads_flag
+        threads_flag=threads_flag,
+        onStart=onStart
     )
 
 if __name__ == "__main__":
