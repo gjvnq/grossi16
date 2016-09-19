@@ -4,7 +4,7 @@ import click
 import webbrowser
 import grossi16.web as web
 
-@click.command(context_settings={"resilient_parsing": True})
+@click.command()
 @click.option(
     '--port',
     '-p',
@@ -38,7 +38,7 @@ import grossi16.web as web
     '--open-browser/--no-open-browser',
     'open_browser',
     default=True,
-    help="By default, your webbrowser will be automatically oppend as soon as the server is ready"
+    help="By default, your web browser will be automatically oppend as soon as the server is ready"
 )
 @click.option(
     '--use-threads/--no-threads',
@@ -47,6 +47,7 @@ import grossi16.web as web
     help="Default value: True"
 )
 def main(addr, port, code, debug_mode, threads_flag, open_browser):
+    print("Starting through cli...")
     onStart = lambda: None
     if open_browser:
         onStart = lambda: webbrowser.open("http://"+addr+":"+str(port)+"/welcome")
