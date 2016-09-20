@@ -14,11 +14,14 @@ import logging
 import tempfile
 import builtins
 import datetime
+import netifaces
 import pkg_resources
 from random import randint
 from CommonMark import commonmark
 
 UseCache = True
+ServerAddr = None
+ServerPort = None
 ServerStart = None
 TeacherPasswd = None
 
@@ -68,7 +71,10 @@ def remove_p_tags(text):
 
 @webapp.route("/")
 def who_are_you():
-    return templater("index.html")
+    if not is_teacher_logged_in():
+        return templater("index.html")
+    else:
+        return templater("welcome.html", addr=str(ServerAddr), port=str(ServerPort))
 
 @webapp.route("/student")
 def student_page():
@@ -288,13 +294,13 @@ def static_handler(path):
 
 # CLI PART
 
-def main(addr, port, code, debug_mode, threads_flag, onStart):
+def main(**kwargs):
     # Load files in memory
-    global FilesCache, ServerStart, UseCache, TeacherPasswd
+    global FilesCache, ServerStart, UseCache, TeacherPasswd, ServerAddr, ServerPort
 
-    TeacherPasswd = str(code)
+    TeacherPasswd = str(kwargs["code"])
     ServerStart = datetime.datetime.now()
-    UseCache = not debug_mode
+    UseCache = not kwargs["debug_mode"]
 
     if UseCache == True:
         print("Loading files...")
@@ -310,13 +316,13 @@ def main(addr, port, code, debug_mode, threads_flag, onStart):
 
     # Start webserver
     print("Starting webserver")
-    print("Options in use: "+str({
-        "host": addr,
-        "port": port,
-        "threaded": threads_flag,
-        "debug": debug_mode,
-        "UseCache": UseCache,
-        "TeacherPasswd": TeacherPasswd
-    }))
-    onStart()
-    webapp.run(host=addr, port=port, threaded=threads_flag, debug=debug_mode)
+    print("Options in use: "+str(kwargs))
+    kwargs["onStart"]()
+    ServerAddr = kwargs["user_addr"]
+    ServerPort = kwargs["port"]
+    webapp.run(
+        host=kwargs["addr"],
+        port=kwargs["port"],
+        threaded=kwargs["threads_flag"],
+        debug=kwargs["debug_mode"]
+    )

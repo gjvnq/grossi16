@@ -16,7 +16,8 @@ setup(name='grossi16',
         'flask>=0.11.1',
         'click>=6.6',
         'CommonMark>=0.7.2',
-        'FilterHTML>=0.5.0'
+        'FilterHTML>=0.5.0',
+        'netifaces>=0.10.5'
       ],
       entry_points={
           'console_scripts': [

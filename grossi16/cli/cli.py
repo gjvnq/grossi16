@@ -16,7 +16,7 @@ import grossi16.web as web
     '--bind-address',
     'addr',
     '-a',
-    default="0.0.0.0",
+    default="::",
     help='Address in which to bind the web server. Leave the default if you do not know what you are doing!'
 )
 @click.option(
@@ -47,19 +47,29 @@ import grossi16.web as web
     help="Default value: True"
 )
 def main(addr, port, code, debug_mode, threads_flag, open_browser):
+    print("Picking best ip address to use")
+    user_addr = get_user_addr()
+    global OpenBrowser
+    OpenBrowser = open_browser
+
     print("Starting through cli...")
-    onStart = lambda: None
-    if open_browser:
-        onStart = lambda: webbrowser.open("http://"+addr+":"+str(port)+"/welcome")
 
     web.main(
         addr=addr,
+        user_addr=user_addr,
         port=port,
         code=code,
         debug_mode=debug_mode,
         threads_flag=threads_flag,
-        onStart=onStart
+        onStart=startHook
     )
+
+def get_user_addr():
+    return None
+
+def startHook():
+    if OpenBrowser:
+        webbrowser.open("http://"+addr+":"+str(port)+"/welcome")
 
 if __name__ == "__main__":
     main()
