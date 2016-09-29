@@ -76,6 +76,18 @@ def who_are_you():
     else:
         return templater("welcome.html", addrs=ServerAddrs, port=str(ServerPort))
 
+@webapp.route("/welcome")
+def login_via_get():
+    # Store password in cookie
+    resp = flask.Response()
+    resp.set_cookie("passwd", flask.request.args.get("passwd"))
+
+    # Check if password is correct
+    resp.headers["Location"] = "/"
+    resp.status_code = 302
+    resp.status = "Found"
+    return resp, 302
+
 @webapp.route("/student")
 def student_page():
     # Generate answers list
@@ -296,7 +308,7 @@ def static_handler(path):
 
 def main(**kwargs):
     # Load files in memory
-    global FilesCache, ServerStart, UseCache, TeacherPasswd, ServerAddr, ServerPort
+    global FilesCache, ServerStart, UseCache, TeacherPasswd, ServerAddrs, ServerPort
 
     TeacherPasswd = str(kwargs["code"])
     ServerStart = datetime.datetime.now()
@@ -317,7 +329,7 @@ def main(**kwargs):
     # Start webserver
     print("Starting webserver")
     print("Options in use: "+str(kwargs))
-    kwargs["onStart"]()
+    kwargs["onStart"](**kwargs)
     ServerAddrs = kwargs["user_addr"]
     ServerPort = kwargs["port"]
     webapp.run(

@@ -21,7 +21,7 @@ IPV6_REGEX = re.compile("([0-9]{1,3}[.]){3}[0-9]{1,3}")
     '--bind-address',
     'addr',
     '-a',
-    default="::",
+    default="0.0.0.0",
     help='Address in which to bind the web server. Leave the default if you do not know what you are doing!'
 )
 @click.option(
@@ -74,19 +74,22 @@ def get_user_addr():
     addr6 = []
     for name in netifs.interfaces():
         addr = netifs.ifaddresses(name)
-        if netifs.AF_INET:
-            addr4.append(addr[AF_INET])
-        if netifs.AF_INET6:
-            addr6.append(addr[AF_INET6])
+        if netifs.AF_INET in addr:
+            if "addr" in addr[netifs.AF_INET][0]:
+                addr4.append(addr[netifs.AF_INET][0]["addr"])
+        if netifs.AF_INET6 in addr:
+            if "addr" in addr[netifs.AF_INET6][0]:
+                addr6.append(addr[netifs.AF_INET6][0]["addr"])
 
+    print(addr4, addr6)
     if len(addr4) > 0:
         return addr4
     else:
         return addr6
 
-def startHook():
+def startHook(addr, port, code, **kwargs):
     if OpenBrowser:
-        webbrowser.open("http://"+addr+":"+str(port)+"/welcome")
+        webbrowser.open("http://"+addr+":"+str(port)+"/welcome?passwd="+str(code))
 
 if __name__ == "__main__":
     main()
