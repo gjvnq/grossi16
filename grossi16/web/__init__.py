@@ -20,7 +20,7 @@ from random import randint
 from CommonMark import commonmark
 
 UseCache = True
-ServerAddr = None
+ServerAddrs = None
 ServerPort = None
 ServerStart = None
 TeacherPasswd = None
@@ -74,7 +74,7 @@ def who_are_you():
     if not is_teacher_logged_in():
         return templater("index.html")
     else:
-        return templater("welcome.html", addr=str(ServerAddr), port=str(ServerPort))
+        return templater("welcome.html", addrs=ServerAddrs, port=str(ServerPort))
 
 @webapp.route("/student")
 def student_page():
@@ -318,7 +318,7 @@ def main(**kwargs):
     print("Starting webserver")
     print("Options in use: "+str(kwargs))
     kwargs["onStart"]()
-    ServerAddr = kwargs["user_addr"]
+    ServerAddrs = kwargs["user_addr"]
     ServerPort = kwargs["port"]
     webapp.run(
         host=kwargs["addr"],

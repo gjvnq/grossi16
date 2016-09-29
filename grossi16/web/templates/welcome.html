@@ -28,6 +28,13 @@
       <div class="eleven columns">
         <h3 class="section-heading">Instruções</h3>
       </div>
+      <div class="eleven columns">
+        <ul>
+        {% for addr in addrs %}
+          <li>{{ addr }}:{{port}}</li>
+        {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
 

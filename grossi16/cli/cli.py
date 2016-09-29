@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 
+import re
 import click
 import webbrowser
+import netifaces as netifs
 import grossi16.web as web
+
+IPV4_REGEX = re.compile("([0-9]{1,3}[.]){3}[0-9]{1,3}")
+IPV6_REGEX = re.compile("([0-9]{1,3}[.]){3}[0-9]{1,3}")
 
 @click.command()
 @click.option(
@@ -65,7 +70,19 @@ def main(addr, port, code, debug_mode, threads_flag, open_browser):
     )
 
 def get_user_addr():
-    return None
+    addr4 = []
+    addr6 = []
+    for name in netifs.interfaces():
+        addr = netifs.ifaddresses(name)
+        if netifs.AF_INET:
+            addr4.append(addr[AF_INET])
+        if netifs.AF_INET6:
+            addr6.append(addr[AF_INET6])
+
+    if len(addr4) > 0:
+        return addr4
+    else:
+        return addr6
 
 def startHook():
     if OpenBrowser:
